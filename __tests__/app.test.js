@@ -26,15 +26,16 @@ describe("GET", () => {
       .expect(200)
       .then(({ body }) => {
         const { categories } = body;
-        console.log(categories);
+
         expect(Array.isArray(categories)).toBe(true);
+        expect(categories.length).toBeGreaterThan(0);
         categories.forEach((category) => {
           expect(category).toHaveProperty("slug", expect.any(String));
           expect(category).toHaveProperty("description", expect.any(String));
         });
       });
   });
-  it.only("returns a 404 error if the category does not exist", () => {
+  it("returns a 404 error if the category does not exist", () => {
     return request(app)
       .get("/api/banana")
       .expect(404)
