@@ -59,7 +59,7 @@ describe("GET", () => {
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
-        console.log(reviews);
+
         expect(reviews).toHaveProperty("review_id", 1);
         expect(reviews).toHaveProperty("title", "Agricola");
         expect(reviews).toHaveProperty("review_body", "Farmyard fun!");
