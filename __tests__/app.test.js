@@ -3,6 +3,7 @@ const app = require("../app");
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
+const sorted = require("jest-sorted");
 
 beforeEach(() => {
   return seed(testData);
@@ -51,7 +52,6 @@ describe("GET", () => {
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
-
         expect(reviews).toHaveProperty("review_id", 1);
         expect(reviews).toHaveProperty("title", "Agricola");
         expect(reviews).toHaveProperty("review_body", "Farmyard fun!");
@@ -83,6 +83,32 @@ describe("GET", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.message).toBe("Invalid ID");
+      });
+  });
+});
+
+describe("GET", () => {
+  it("should respond with an array of review objects with expected properties", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        const bodyReviews = body.reviews;
+        expect(bodyReviews).toHaveLength(13);
+        expect(bodyReviews).toBeInstanceOf(Array);
+        bodyReviews.forEach((review) => {
+          expect(review).toHaveProperty("review_id", expect.any(Number));
+          expect(review).toHaveProperty("title", expect.any(String));
+          expect(review).toHaveProperty("designer", expect.any(String));
+          expect(review).toHaveProperty("review_img_url", expect.any(String));
+          expect(review).toHaveProperty("votes", expect.any(Number));
+          expect(review).toHaveProperty("category", expect.any(String));
+          expect(review).toHaveProperty("owner", expect.any(String));
+          expect(review).toHaveProperty("comment_count", expect.any(String));
+          expect(review).toHaveProperty("created_at", expect.any(String));
+          expect(Object.keys(review)).toHaveLength(9);
+          expect(bodyReviews).toBeSortedBy("created_at", { descending: true });
+        });
       });
   });
 });
