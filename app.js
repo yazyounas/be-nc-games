@@ -20,6 +20,7 @@ app.get("/api/categories", getCategories);
 app.get("/api/reviews/:review_id", getReviewsId);
 app.get("/api/reviews", getReviewsCount);
 
+
 app.all("/*", invalidPath);
 app.use(handlePSQL400s);
 app.use(errorHandler);
