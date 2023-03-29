@@ -9,7 +9,7 @@ exports.getCategories = (req, res) => {
   });
 };
 
-exports.getReviewsId = (req, res) => {
+exports.getReviewsId = (req, res, next) => {
   const { review_id } = req.params;
 
   fetchReviewsId(review_id)

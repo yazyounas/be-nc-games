@@ -45,14 +45,6 @@ describe("GET", () => {
 });
 
 describe("GET", () => {
-  it("should get 200 if respond with the message are all is well", () => {
-    return request(app)
-      .get("/api/reviews")
-      .expect(200)
-      .then(({ body }) => {
-        expect(body.message).toBe("All is well");
-      });
-  });
   it("should responds with a review object with expected properties", () => {
     return request(app)
       .get(`/api/reviews/1`)
@@ -83,6 +75,14 @@ describe("GET", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.message).toBe("review not found");
+      });
+  });
+  it("400: GET invalid review_id", () => {
+    return request(app)
+      .get("/api/reviews/hello")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid ID");
       });
   });
 });
