@@ -28,7 +28,11 @@ exports.getReviewsId = (req, res, next) => {
 
 exports.getReviewComments = (req, res, next) => {
   const { review_id } = req.params;
-  fetchComments(review_id).then((rows) => {
-    res.status(200).send({ comments: rows });
-  });
+  fetchComments(review_id)
+    .then((rows) => {
+      res.status(200).send({ comments: rows });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

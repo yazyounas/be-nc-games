@@ -16,14 +16,11 @@ const fetchReviewsId = (review_id) => {
     });
 };
 const fetchComments = (review_id) => {
-  return db
-    .query(
-      "SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC",
-      [review_id]
-    )
+  return db.query("SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC", [review_id])
     .then((result) => {
       return result.rows;
     });
+    
 };
 
 module.exports = { fetchCategories, fetchReviewsId, fetchComments };

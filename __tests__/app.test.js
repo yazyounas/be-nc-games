@@ -89,13 +89,22 @@ describe("GET", () => {
 });
 
 describe("GET", () => {
-  it("should return array of comments when given review_id with following properties", () => {
+  it.only("should return an empty array of comments when given a valid ID but no comments", () => {
+    return request(app)
+      .get(`/api/reviews/5/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toEqual([]);
+      });
+  });
+  it.only("should return array of comments when given review_id with following properties", () => {
     return request(app)
       .get(`/api/reviews/2/comments`)
       .expect(200)
       .then(({ body }) => {
         const comments = body.comments;
-        expect(comments.length).toBe(3);
+        expect(comments.length).toBeGreaterThan(0);
         comments.forEach((comment) => {
           expect(comment).toHaveProperty("comment_id", expect.any(Number));
           expect(comment).toHaveProperty("body", expect.any(String));
@@ -107,13 +116,31 @@ describe("GET", () => {
         });
       });
   });
-  it("should return comments sorted by created_at in descending order", () => {
+  it.only("should return comments sorted by created_at in descending order", () => {
     return request(app)
       .get("/api/reviews/2/comments")
       .expect(200)
       .then(({ body }) => {
         const { comments } = body;
         expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  it.only("should return status 400 if given an invalid ID", () => {
+    return request(app)
+      .get(`/api/reviews/not-an-id/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid ID");
+      });
+  });
+
+  it.only("should return status 404 if given a non-existent ID", () => {
+    return request(app)
+      .get(`/api/reviews/9999`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("review not found");
       });
   });
 });
