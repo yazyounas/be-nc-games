@@ -15,8 +15,7 @@ const fetchReviewsId = (review_id) => {
       return result;
     });
 };
-module.exports = { fetchCategories, fetchReviewsId, fetchComments };
-=======
+
 const fetchAllReviews = () => {
   return db
     .query(
@@ -29,20 +28,23 @@ const fetchAllReviews = () => {
     )
     .then((rows) => {
       return rows;
-    })
-    .catch((err) => console.log('this is an err', err))
+    });
 };
 
 const fetchComments = (review_id) => {
-  return db.query("SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC", [review_id])
+  return db
+    .query(
+      "SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC",
+      [review_id]
+    )
     .then((result) => {
       return result.rows;
     });
-    
 };
 
-
-
-
-module.exports = { fetchCategories, fetchReviewsId, fetchAllReviews };
-
+module.exports = {
+  fetchCategories,
+  fetchReviewsId,
+  fetchAllReviews,
+  fetchComments,
+};

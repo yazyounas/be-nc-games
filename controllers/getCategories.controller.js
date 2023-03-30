@@ -1,11 +1,8 @@
 const {
   fetchCategories,
   fetchReviewsId,
-fetchAllReviews,
+  fetchAllReviews,
   fetchComments,
-
-  
-
 } = require("../models/fetchCategories.model");
 
 exports.getCategories = (req, res) => {
@@ -30,12 +27,10 @@ exports.getReviewsId = (req, res, next) => {
     });
 };
 exports.getReviewsCount = (req, res, next) => {
-  fetchAllReviews()
-  .then(({rows}) => {
-    res.status(200).send({reviews : rows})
-  })
- 
-}
+  fetchAllReviews().then(({ rows }) => {
+    res.status(200).send({ reviews: rows });
+  });
+};
 
 exports.getReviewComments = (req, res, next) => {
   const { review_id } = req.params;
@@ -47,6 +42,3 @@ exports.getReviewComments = (req, res, next) => {
       next(err);
     });
 };
-
-
-

@@ -88,9 +88,6 @@ describe("GET", () => {
 });
 
 describe("GET", () => {
-
-  
-
   it("should respond with an array of review objects with expected properties", () => {
     return request(app)
       .get("/api/reviews")
@@ -114,9 +111,9 @@ describe("GET", () => {
         });
       });
   });
-
 });
-it("should return an empty array of comments when given a valid ID but no comments", () => {
+describe("GET", () => {
+  it("should return an empty array of comments when given a valid ID but no comments", () => {
     return request(app)
       .get(`/api/reviews/5/comments`)
       .expect(200)
@@ -170,3 +167,4 @@ it("should return an empty array of comments when given a valid ID but no commen
         expect(body.message).toBe("review not found");
       });
   });
+});
