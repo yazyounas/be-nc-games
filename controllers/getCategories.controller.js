@@ -1,6 +1,7 @@
 const {
   fetchCategories,
   fetchReviewsId,
+  fetchAllReviews,
 } = require("../models/fetchCategories.model");
 
 exports.getCategories = (req, res) => {
@@ -24,3 +25,10 @@ exports.getReviewsId = (req, res, next) => {
       }
     });
 };
+exports.getReviewsCount = (req, res, next) => {
+  fetchAllReviews()
+  .then(({rows}) => {
+    res.status(200).send({reviews : rows})
+  })
+ 
+}
