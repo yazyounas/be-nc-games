@@ -52,7 +52,6 @@ describe("GET", () => {
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
-
         expect(reviews).toHaveProperty("review_id", 1);
         expect(reviews).toHaveProperty("title", "Agricola");
         expect(reviews).toHaveProperty("review_body", "Farmyard fun!");
@@ -89,7 +88,35 @@ describe("GET", () => {
 });
 
 describe("GET", () => {
-  it("should return an empty array of comments when given a valid ID but no comments", () => {
+
+  
+
+  it("should respond with an array of review objects with expected properties", () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        const bodyReviews = body.reviews;
+        expect(bodyReviews).toHaveLength(13);
+        expect(bodyReviews).toBeInstanceOf(Array);
+        bodyReviews.forEach((review) => {
+          expect(review).toHaveProperty("review_id", expect.any(Number));
+          expect(review).toHaveProperty("title", expect.any(String));
+          expect(review).toHaveProperty("designer", expect.any(String));
+          expect(review).toHaveProperty("review_img_url", expect.any(String));
+          expect(review).toHaveProperty("votes", expect.any(Number));
+          expect(review).toHaveProperty("category", expect.any(String));
+          expect(review).toHaveProperty("owner", expect.any(String));
+          expect(review).toHaveProperty("comment_count", expect.any(String));
+          expect(review).toHaveProperty("created_at", expect.any(String));
+          expect(Object.keys(review)).toHaveLength(9);
+          expect(bodyReviews).toBeSortedBy("created_at", { descending: true });
+        });
+      });
+  });
+
+});
+it("should return an empty array of comments when given a valid ID but no comments", () => {
     return request(app)
       .get(`/api/reviews/5/comments`)
       .expect(200)
@@ -143,4 +170,3 @@ describe("GET", () => {
         expect(body.message).toBe("review not found");
       });
   });
-});

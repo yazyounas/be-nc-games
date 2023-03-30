@@ -15,6 +15,24 @@ const fetchReviewsId = (review_id) => {
       return result;
     });
 };
+module.exports = { fetchCategories, fetchReviewsId, fetchComments };
+=======
+const fetchAllReviews = () => {
+  return db
+    .query(
+      `SELECT reviews.owner, reviews.title, reviews.review_id, reviews.category, reviews.review_img_url, reviews.created_at, reviews.votes, reviews.designer, COUNT(comments.comment_id) AS comment_count
+  FROM reviews
+  LEFT JOIN comments ON reviews.review_id = comments.review_id
+  GROUP BY reviews.review_id
+  ORDER BY reviews.created_at DESC;
+`
+    )
+    .then((rows) => {
+      return rows;
+    })
+    .catch((err) => console.log('this is an err', err))
+};
+
 const fetchComments = (review_id) => {
   return db.query("SELECT * FROM comments WHERE review_id = $1 ORDER BY created_at DESC", [review_id])
     .then((result) => {
@@ -23,4 +41,8 @@ const fetchComments = (review_id) => {
     
 };
 
-module.exports = { fetchCategories, fetchReviewsId, fetchComments };
+
+
+
+module.exports = { fetchCategories, fetchReviewsId, fetchAllReviews };
+
