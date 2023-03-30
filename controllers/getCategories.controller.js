@@ -1,7 +1,11 @@
 const {
   fetchCategories,
   fetchReviewsId,
-  fetchAllReviews,
+fetchAllReviews,
+  fetchComments,
+
+  
+
 } = require("../models/fetchCategories.model");
 
 exports.getCategories = (req, res) => {
@@ -32,3 +36,17 @@ exports.getReviewsCount = (req, res, next) => {
   })
  
 }
+
+exports.getReviewComments = (req, res, next) => {
+  const { review_id } = req.params;
+  fetchComments(review_id)
+    .then((rows) => {
+      res.status(200).send({ comments: rows });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+
+

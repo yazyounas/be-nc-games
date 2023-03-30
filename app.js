@@ -3,7 +3,11 @@ const app = express();
 const {
   getCategories,
   getReviewsId,
-  getReviewsCount,
+getReviewsCount,
+  getReviewComments,
+
+  
+
 } = require("./controllers/getCategories.controller");
 const {
   invalidPath,
@@ -19,6 +23,7 @@ app.get("/api/categories", getCategories);
 
 app.get("/api/reviews/:review_id", getReviewsId);
 app.get("/api/reviews", getReviewsCount);
+app.get("/api/reviews/:review_id/comments", getReviewComments);
 
 
 app.all("/*", invalidPath);
