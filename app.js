@@ -3,6 +3,7 @@ const app = express();
 const {
   getCategories,
   getReviewsId,
+  getReviewComments,
 } = require("./controllers/getCategories.controller");
 const { invalidPath, errorHandler, handlePSQL400s } = require("./errors.js");
 
@@ -12,7 +13,7 @@ app.get("/api", (req, res) => {
 app.get("/api/categories", getCategories);
 
 app.get("/api/reviews/:review_id", getReviewsId);
-app.get("api/reviews");
+app.get("/api/reviews/:review_id/comments", getReviewComments);
 
 app.use(handlePSQL400s);
 app.use(errorHandler);

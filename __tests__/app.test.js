@@ -3,6 +3,7 @@ const app = require("../app");
 const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
+const sorted = require("jest-sorted");
 
 beforeEach(() => {
   return seed(testData);
@@ -83,6 +84,36 @@ describe("GET", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.message).toBe("Invalid ID");
+      });
+  });
+});
+
+describe("GET", () => {
+  it("should return array of comments when given review_id with following properties", () => {
+    return request(app)
+      .get(`/api/reviews/2/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        expect(comments.length).toBe(3);
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("body", expect.any(String));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+          expect(comment).toHaveProperty("review_id", expect.any(Number));
+          expect(Object.keys(comment)).toHaveLength(6);
+        });
+      });
+  });
+  it("should return comments sorted by created_at in descending order", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
