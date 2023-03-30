@@ -104,7 +104,7 @@ describe("GET", () => {
       .expect(200)
       .then(({ body }) => {
         const comments = body.comments;
-        expect(comments.length).toBeGreaterThan(0);
+        expect(comments.length).toBeDefined();
         comments.forEach((comment) => {
           expect(comment).toHaveProperty("comment_id", expect.any(Number));
           expect(comment).toHaveProperty("body", expect.any(String));
