@@ -184,7 +184,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
         const { comment } = body;
 
         expect(comment).toEqual({
-          comment_id: expect.any(Number),
+          comment_id: 7,
           body: "I am slow but i am committed",
           votes: 0,
           author: "mallionaire",
@@ -193,7 +193,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
         });
       });
   });
-  it("should respond with username and body with comment", () => {
+  it("should create a new comment on review 4 with the provided properties, ignoring any extra properties',", () => {
     const commentInput = {
       body: "I am slow but i am committed",
       author: "mallionaire",
