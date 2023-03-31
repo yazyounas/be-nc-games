@@ -42,9 +42,25 @@ const fetchComments = (review_id) => {
     });
 };
 
+const postComment = (review_id, newComment) => {
+  const votes = 0;
+  const { body, author } = newComment;
+
+  return db
+    .query(
+      `INSERT INTO comments (author, votes, body, review_id) VALUES ($1, $2, $3, $4) RETURNING *;`,
+      [author, votes, body, review_id]
+    )
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
 module.exports = {
   fetchCategories,
   fetchReviewsId,
   fetchAllReviews,
   fetchComments,
+  postComment,
+  updateReviewVotes,
 };

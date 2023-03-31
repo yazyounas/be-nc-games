@@ -168,3 +168,51 @@ describe("GET", () => {
       });
   });
 });
+
+describe("POST /api/reviews/:review_id/comments", () => {
+  it("should respond with username and body with comment", () => {
+    const commentInput = {
+      body: "I am slow but i am committed",
+      author: "mallionaire",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(commentInput)
+      .expect(201)
+      .then((response) => {
+        const { body } = response;
+        const { comments } = body;
+
+        expect(comments).toEqual({
+          comment_id: expect.any(Number),
+          body: "I am slow but i am committed",
+          votes: 0,
+          author: "mallionaire",
+          review_id: 4,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  it("should return status 404 if given a non-existent ID", () => {
+    const commentInput = {
+      body: "I am slow but i am committed",
+      author: "mallionaire",
+    };
+    return request(app)
+      .post(`/api/reviews/9999/comments`)
+      .send(commentInput)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("ID not found");
+      });
+  });
+  it("should return status 400 if given an invalid ID", () => {
+    return request(app)
+      .post(`/api/reviews/not-an-id/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid ID");
+      });
+  });
+});
+
