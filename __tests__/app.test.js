@@ -169,7 +169,7 @@ describe("GET", () => {
   });
 });
 
-describe("POST /api/reviews/:review_id/comments", () => {
+describe.only("POST /api/reviews/:review_id/comments", () => {
   it("should respond with username and body with comment", () => {
     const commentInput = {
       body: "I am slow but i am committed",
@@ -181,9 +181,9 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .expect(201)
       .then((response) => {
         const { body } = response;
-        const { comments } = body;
+        const { comment } = body;
 
-        expect(comments).toEqual({
+        expect(comment).toEqual({
           comment_id: expect.any(Number),
           body: "I am slow but i am committed",
           votes: 0,
@@ -191,6 +191,30 @@ describe("POST /api/reviews/:review_id/comments", () => {
           review_id: 4,
           created_at: expect.any(String),
         });
+      });
+  });
+  it("should respond with username and body with comment", () => {
+    const commentInput = {
+      body: "I am slow but i am committed",
+      author: "mallionaire",
+      extraProperty: "This property should be ignored by the server",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(commentInput)
+      .expect(201)
+      .then((response) => {
+        const { body } = response;
+        const { comment } = body;
+        expect(comment).toEqual({
+          comment_id: expect.any(Number),
+          body: "I am slow but i am committed",
+          votes: 0,
+          author: "mallionaire",
+          review_id: 4,
+          created_at: expect.any(String),
+        });
+        expect(comment).not.toHaveProperty("extraProperty");
       });
   });
   it("should return status 404 if given a non-existent ID", () => {
@@ -215,4 +239,3 @@ describe("POST /api/reviews/:review_id/comments", () => {
       });
   });
 });
-

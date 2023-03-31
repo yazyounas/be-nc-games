@@ -62,5 +62,5 @@ module.exports = {
   fetchAllReviews,
   fetchComments,
   postComment,
-  updateReviewVotes,
+ 
 };
