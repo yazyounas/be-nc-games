@@ -16,6 +16,7 @@ exports.handlePSQL404 = (err, req, res, next) => {
     next(err);
   }
 };
+
 exports.handleSQL400 = (err, req, res, next) => {
   if (err.code === "23502") {
     res.status(400).send({ message: "Missing required field" });

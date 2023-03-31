@@ -6,6 +6,7 @@ const {
   getReviewsCount,
   getReviewComments,
   postReviewComments,
+  updateVotes,
 } = require("./controllers/getCategories.controller");
 const {
   invalidPath,
@@ -13,7 +14,6 @@ const {
   handlePSQL400s,
   handle500,
   handlePSQL404,
-
   handleSQL400,
 } = require("./errors.js");
 app.use(express.json());
@@ -25,6 +25,7 @@ app.get("/api/reviews/:review_id", getReviewsId);
 app.get("/api/reviews", getReviewsCount);
 app.get("/api/reviews/:review_id/comments", getReviewComments);
 app.post("/api/reviews/:review_id/comments", postReviewComments);
+app.patch('/api/reviews/:review_id', updateVotes)
 
 app.all("/*", invalidPath);
 app.use(handlePSQL400s);

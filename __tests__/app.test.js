@@ -52,6 +52,7 @@ describe("GET", () => {
       .expect(200)
       .then(({ body }) => {
         const { reviews } = body;
+
         expect(reviews).toHaveProperty("review_id", 1);
         expect(reviews).toHaveProperty("title", "Agricola");
         expect(reviews).toHaveProperty("review_body", "Farmyard fun!");
@@ -262,6 +263,59 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.message).toBe("ID not found");
+      });
+  });
+});
+
+describe("PATCH /api/reviews/:review_id", () => {
+  it("should return the following properties and the vote incremented  by 1", () => {
+    const newVotes = 1;
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({ inc_votes: newVotes })
+      .expect(200)
+      .then(({ body }) => {
+        const { review } = body;
+        expect(review).toEqual({
+          review_id: 1,
+          title: "Agricola",
+          category: "euro game",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_body: "Farmyard fun!",
+          review_img_url:
+            "https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 2,
+        });
+        expect(Object.keys(review)).toHaveLength(9);
+      });
+  });
+  it("404:should respond with status 404 for non-existent review_id", () => {
+    return request(app)
+      .patch("/api/reviews/999")
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("ID not found");
+      });
+  });
+  it("400:should have correct id format", () => {
+    return request(app)
+      .patch("/api/reviews/does-not-exist")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid ID");
+      });
+  });
+  it("400:should give an error when object sent is empty", () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Missing required field");
       });
   });
 });
