@@ -168,3 +168,100 @@ describe("GET", () => {
       });
   });
 });
+
+describe("POST /api/reviews/:review_id/comments", () => {
+  it("should respond with username and body with comment", () => {
+    const commentInput = {
+      body: "I am slow but i am committed",
+      author: "mallionaire",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(commentInput)
+      .expect(201)
+      .then((response) => {
+        const { body } = response;
+        const { comment } = body;
+
+        expect(comment).toEqual({
+          comment_id: 7,
+          body: "I am slow but i am committed",
+          votes: 0,
+          author: "mallionaire",
+          review_id: 4,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  it("should create a new comment on review 4 with the provided properties, ignoring any extra properties',", () => {
+    const commentInput = {
+      body: "I am slow but i am committed",
+      author: "mallionaire",
+      extraProperty: "This property should be ignored by the server",
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(commentInput)
+      .expect(201)
+      .then((response) => {
+        const { body } = response;
+        const { comment } = body;
+        expect(comment).toEqual({
+          comment_id: 7,
+          body: "I am slow but i am committed",
+          votes: 0,
+          author: "mallionaire",
+          review_id: 4,
+          created_at: expect.any(String),
+        });
+        expect(comment).not.toHaveProperty("extraProperty");
+      });
+  });
+  it("should return status 404 if given a non-existent ID", () => {
+    const commentInput = {
+      body: "I am slow but i am committed",
+      author: "mallionaire",
+    };
+    return request(app)
+      .post(`/api/reviews/9999/comments`)
+      .send(commentInput)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("ID not found");
+      });
+  });
+  it("should return status 400 if given an invalid ID", () => {
+    return request(app)
+      .post(`/api/reviews/not-an-id/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid ID");
+      });
+  });
+  it("should respond with 400 if missing fields", () => {
+    const commentInput = {
+      author: "mallionaire",
+    };
+
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(commentInput)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Missing required field");
+      });
+  });
+  it("should respond with 404 if author does not exist", () => {
+    const commentInput = {
+      body: "I am slow but i am committed",
+      author: "nonexistentUser", // Set a nonexistent username
+    };
+    return request(app)
+      .post("/api/reviews/4/comments")
+      .send(commentInput)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("ID not found");
+      });
+  });
+});
