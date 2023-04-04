@@ -9,7 +9,7 @@ const fetchReviewsId = (review_id) => {
   return db
     .query("SELECT * From reviews WHERE review_id = $1", [review_id])
     .then((result) => {
-      if (result.rows.length === 0) {
+      if (result.rows.length=== 0) {
         return Promise.reject({ status: 404, message: "review not found" });
       }
       return result;
@@ -71,6 +71,17 @@ const updateReviewVotes = (review_id, newVotes) => {
     return result.rows[0];
   });
 };
+
+const deleteCommentById = (comment_id) =>{
+  console.log('i am here')
+  return db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id])
+  .then((result) => {
+    if (result.rowCount === 0) {
+      return Promise.reject({ status: 404, message: "ID not found" });
+    }
+    return result.rowCount;
+  });
+}
     
 
   
@@ -84,4 +95,5 @@ module.exports = {
   fetchComments,
   postComment,
   updateReviewVotes,
+  deleteCommentById
 };

@@ -183,7 +183,6 @@ describe("POST /api/reviews/:review_id/comments", () => {
       .then((response) => {
         const { body } = response;
         const { comment } = body;
-
         expect(comment).toEqual({
           comment_id: 7,
           body: "I am slow but i am committed",
@@ -269,10 +268,9 @@ describe("POST /api/reviews/:review_id/comments", () => {
 
 describe("PATCH /api/reviews/:review_id", () => {
   it("should return the following properties and the vote incremented  by 1", () => {
-    const newVotes = 1;
     return request(app)
       .patch("/api/reviews/1")
-      .send({ inc_votes: newVotes })
+      .send({ inc_votes: 1 })
       .expect(200)
       .then(({ body }) => {
         const { review } = body;
@@ -316,6 +314,58 @@ describe("PATCH /api/reviews/:review_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.message).toBe("Missing required field");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  it("should delete the given comment with comment_id", () => {
+    const commentToDelete = {
+      comment_id: 1,
+      body: "I loved this game too!",
+      review_id: 2,
+      author: "bainesface",
+      votes: 16,
+      created_at: "2017-11-22T12:43:33.389Z",
+    };
+    return request(app)
+      .delete(`/api/comments/${commentToDelete.comment_id}`)
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  it("400:should have correct id format", () => {
+    return request(app)
+      .delete("/api/comments/does-not-exist")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid ID");
+      });
+  });
+  it("should return a 404 error if the comment does not exist", () => {
+    return request(app)
+      .delete(`/api/comments/999`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("ID not found");
+      });
+  });
+  it("should return a 404 error if the comment ID is valid but out of scope", () => {
+    const commentToDelete = {
+      comment_id: 9999, // assume this ID is not in the database
+      body: "I loved this game too!",
+      review_id: 2,
+      author: "bainesface",
+      votes: 16,
+      created_at: "2017-11-22T12:43:33.389Z",
+    };
+  
+    return request(app)
+      .delete(`/api/comments/${commentToDelete.comment_id}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("ID not found");
       });
   });
 });
