@@ -9,7 +9,7 @@ const fetchReviewsId = (review_id) => {
   return db
     .query("SELECT * From reviews WHERE review_id = $1", [review_id])
     .then((result) => {
-      if (result.rows.length=== 0) {
+      if (result.rows.length === 0) {
         return Promise.reject({ status: 404, message: "review not found" });
       }
       return result;
@@ -57,36 +57,41 @@ const postComment = (review_id, newComment) => {
 };
 
 const updateReviewVotes = (review_id, newVotes) => {
-  return db.query(`
+  return db
+    .query(
+      `
   
     UPDATE reviews
     SET votes = votes + $1
     WHERE review_id = $2
     RETURNING *
-  `, [newVotes, review_id])
-  .then((result) => {
-    if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, message: "ID not found" });
-    }
-    return result.rows[0];
-  });
+  `,
+      [newVotes, review_id]
+    )
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, message: "ID not found" });
+      }
+      return result.rows[0];
+    });
 };
 
-const deleteCommentById = (comment_id) =>{
-  console.log('i am here')
-  return db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id])
-  .then((result) => {
-    if (result.rowCount === 0) {
-      return Promise.reject({ status: 404, message: "ID not found" });
-    }
-    return result.rowCount;
+const deleteCommentById = (comment_id) => {
+  return db
+    .query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id])
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return Promise.reject({ status: 404, message: "ID not found" });
+      }
+      return result.rowCount;
+    });
+};
+
+const fetchUsers = (isAuthorized) => {
+  return db.query(`SELECT * FROM users`).then((result) => {
+    return result;
   });
-}
-    
-
-  
-
-
+};
 
 module.exports = {
   fetchCategories,
@@ -95,5 +100,6 @@ module.exports = {
   fetchComments,
   postComment,
   updateReviewVotes,
-  deleteCommentById
+  deleteCommentById,
+  fetchUsers,
 };

@@ -6,6 +6,7 @@ const {
   postComment,
   updateReviewVotes,
   deleteCommentById,
+  fetchUsers,
 } = require("../models/fetchCategories.model");
 
 exports.getCategories = (req, res) => {
@@ -70,12 +71,20 @@ exports.updateVotes = (req, res, next) => {
     });
 };
 exports.deleteComment = (req, res, next) => {
-  console.log('i am here')
   const { comment_id } = req.params;
-  
+
   deleteCommentById(comment_id)
     .then((comment) => {
-      res.status(204).send(({comment}))
+      res.status(204).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.getUsers = (req, res, next) => {
+  fetchUsers()
+    .then(({ rows }) => {
+      res.status(200).send({ users: rows });
     })
     .catch((err) => {
       next(err);

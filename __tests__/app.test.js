@@ -4,6 +4,7 @@ const request = require("supertest");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index");
 const sorted = require("jest-sorted");
+const { toString } = require("../db/data/test-data/categories");
 
 beforeEach(() => {
   return seed(testData);
@@ -360,12 +361,40 @@ describe("DELETE /api/comments/:comment_id", () => {
       votes: 16,
       created_at: "2017-11-22T12:43:33.389Z",
     };
-  
+
     return request(app)
       .delete(`/api/comments/${commentToDelete.comment_id}`)
       .expect(404)
       .then(({ body }) => {
         expect(body.message).toBe("ID not found");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  it("should return an array of Object the following properties", () => {
+    return request(app)
+      .get("/api/users")
+      .set("Authorization", "Bearer valid_token")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(Array.isArray(users)).toBe(true);
+        expect(users.length).toBeGreaterThan(0);
+        users.forEach((user) => {
+          expect(user).toHaveProperty("username", expect.any(String));
+          expect(user).toHaveProperty("name", expect.any(String));
+          expect(user).toHaveProperty("avatar_url", expect.any(String));
+          expect(Object.keys(user)).toHaveLength(3);
+        });
+      });
+  });
+  it("returns a 404 error if the user does not exist", () => {
+    return request(app)
+      .get("/api/banana")
+      .expect(404)
+      .expect(({ body }) => {
+        expect(body.message).toBe("End point does not exist");
       });
   });
 });
