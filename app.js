@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const app = express();
 const {
   getCategories,
@@ -19,6 +20,7 @@ const {
   handleSQL400,
 } = require("./errors.js");
 app.use(express.json());
+app.use(cors());
 app.get("/api", (req, res) => {
   res.status(200).send({ message: "all okay" });
 });
