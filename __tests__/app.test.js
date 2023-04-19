@@ -269,6 +269,7 @@ describe("POST /api/reviews/:review_id/comments", () => {
 
 describe("PATCH /api/reviews/:review_id", () => {
   it("should return the following properties and the vote incremented  by 1", () => {
+    
     return request(app)
       .patch("/api/reviews/1")
       .send({ inc_votes: 1 })
